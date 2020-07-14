@@ -28,6 +28,16 @@ public class HealthBar : MonoBehaviour
     private DefenseSystem _defenseSystem;
 
 
+    /// <summary>
+    ///  Change bar value to pct (from 1.0 to 0.0)
+    /// </summary>
+    /// <param name="pct"> percentage of bar (from 1.0 to 0.0)</param>
+    public void HandleHealthChanged(float pct)
+    {
+        StartCoroutine(ChangeToPct(pct));
+    }
+
+
     private void Awake()
     {
         _defenseSystem = GetComponentInParent<DefenseSystem>();
@@ -41,6 +51,16 @@ public class HealthBar : MonoBehaviour
         _distanceFromParent = _myTransform.position - _myTransform.parent.position;
     }
 
+    private void Update()
+    {
+        _myTransform.position = _transformParent.position + _distanceFromParent;
+    }
+
+    private void LateUpdate()
+    {
+        var rotation = _cameraTransform.rotation;
+        _myTransform.rotation = new Quaternion(rotation.x, 0, 0, rotation.w);
+    }
 
     private void OnDisable()
     {
@@ -52,15 +72,6 @@ public class HealthBar : MonoBehaviour
         HandleHealthChanged(_defenseSystem.HealthPoints / _defenseSystem.MaxHealthPoints);
     }
 
-
-    /// <summary>
-    ///  Change bar value to pct (from 1.0 to 0.0)
-    /// </summary>
-    /// <param name="pct"> percentage of bar (from 1.0 to 0.0)</param>
-    public void HandleHealthChanged(float pct)
-    {
-        StartCoroutine(ChangeToPct(pct));
-    }
 
 
     private IEnumerator ChangeToPct(float pct)
@@ -80,14 +91,4 @@ public class HealthBar : MonoBehaviour
     }
 
 
-    private void Update()
-    {
-        _myTransform.position = _transformParent.position + _distanceFromParent;
-    }
-
-    private void LateUpdate()
-    {
-        var rotation = _cameraTransform.rotation;
-        _myTransform.rotation = new Quaternion(rotation.x, 0, 0, rotation.w);
-    }
 }
